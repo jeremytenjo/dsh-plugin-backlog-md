@@ -57,7 +57,7 @@ The launcher sits directly beside Source Control in the composer:
 | --- | --- |
 | DeepSeek Harness | `0.2.1-rc.3` tested. The plugin uses the public Cordis lifecycle, `slots`, `locale`, `sidebarRightTabs`, `sidebarRight`, `webServer`, `subprocess`, `sessions`, and `workingDirectory` services. |
 | Backlog.md | `1.55.3` tested; `1.54.0` also verified in the Harness UI. Supported range: `>=1.30.0 <2.0.0`. |
-| Node | 20 or newer on the Host. The shipped plugin has no runtime npm dependencies. |
+| Node | 22 or newer on the Host. The shipped plugin has no runtime npm dependencies. |
 | OS | macOS, Linux, and Windows where Backlog.md's native CLI runs. |
 
 Backlog.md must be installed **in the workspace** (`node_modules/.bin/backlog`) or available on
