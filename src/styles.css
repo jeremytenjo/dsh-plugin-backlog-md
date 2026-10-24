@@ -1,0 +1,460 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .dshbm-ui {
+    --background: var(--dsw-alias-bg-base);
+    --foreground: var(--dsw-alias-label-primary);
+    --card: var(--dsw-alias-bg-layer-1);
+    --card-foreground: var(--dsw-alias-label-primary);
+    --popover: var(--dsw-alias-bg-layer-1);
+    --popover-foreground: var(--dsw-alias-label-primary);
+    --primary: var(--dsw-alias-brand-primary);
+    --primary-foreground: var(--dsw-alias-bg-base);
+    --secondary: var(--dsw-alias-bg-layer-2);
+    --secondary-foreground: var(--dsw-alias-label-primary);
+    --muted: var(--dsw-alias-bg-layer-2);
+    --muted-foreground: var(--dsw-alias-label-secondary);
+    --accent: var(--dsw-alias-bg-layer-3);
+    --accent-foreground: var(--dsw-alias-label-primary);
+    --destructive: var(--dsw-alias-state-error-primary);
+    --destructive-foreground: var(--dsw-alias-bg-base);
+    --border: var(--dsw-alias-border-l1);
+    --input: var(--dsw-alias-border-l1);
+    --ring: var(--dsw-alias-brand-primary);
+    --radius: 8px;
+    --dshbm-font-sans: var(--dsw-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    --dshbm-font-mono: var(--dsw-font-family-code, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+
+    box-sizing: border-box;
+    min-height: 0;
+    color: var(--foreground);
+    font-family: var(--dshbm-font-sans);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .dshbm-ui *,
+  .dshbm-ui *::before,
+  .dshbm-ui *::after {
+    box-sizing: border-box;
+  }
+
+  .dshbm-ui button,
+  .dshbm-ui input,
+  .dshbm-ui textarea,
+  .dshbm-ui select {
+    font-family: inherit;
+  }
+
+  .dshbm-ui :focus-visible {
+    outline: 2px solid var(--dsw-alias-brand-primary);
+    outline-offset: 1px;
+  }
+}
+
+/* The launcher lives in the composer, outside .dshbm-ui. */
+.dshbm-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 1px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+  transition:
+    background 100ms ease,
+    color 100ms ease,
+    border-color 100ms ease;
+}
+.dshbm-trigger:hover {
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-primary);
+}
+.dshbm-trigger:focus-visible {
+  outline: 2px solid var(--dsw-alias-brand-primary);
+  outline-offset: 1px;
+}
+.dshbm-trigger[data-active="true"] {
+  background: var(--dsw-alias-bg-layer-3);
+  border-color: var(--dsw-alias-border-l2);
+  color: var(--dsw-alias-brand-primary);
+}
+.dshbm-tabTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.dshbm-panel {
+  container-name: dshbm;
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--dsw-alias-bg-base);
+}
+
+.dshbm-scroll {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--dsw-alias-scrollbar-bg-l2) transparent;
+  scrollbar-width: thin;
+}
+.dshbm-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.dshbm-scroll::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+  background-color: var(--dsw-alias-scrollbar-bg-l2);
+}
+.dshbm-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: var(--dsw-alias-scrollbar-hover-l2);
+}
+
+/* Both presentations stay mounted and share one TanStack Table instance.
+   The panel container, not the viewport, decides which one is visible. */
+.dshbm-wide {
+  display: none;
+  min-width: 0;
+}
+.dshbm-narrow {
+  display: block;
+  min-width: 0;
+}
+@container dshbm (min-width: 600px) {
+  .dshbm-wide {
+    display: block;
+  }
+  .dshbm-narrow {
+    display: none;
+  }
+}
+
+/* Dense table */
+.dshbm-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  font-size: 12px;
+}
+.dshbm-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 30px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
+  background: var(--dsw-alias-bg-base);
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.dshbm-table thead th:hover {
+  color: var(--dsw-alias-label-secondary);
+}
+.dshbm-table tbody tr {
+  height: 34px;
+}
+.dshbm-table tbody tr:hover {
+  background: var(--dsw-alias-bg-layer-2);
+}
+.dshbm-table tbody tr[data-selected="true"] {
+  background: color-mix(in srgb, var(--dsw-alias-brand-primary) 9%, transparent);
+}
+.dshbm-table tbody tr[data-state="open"] {
+  background: var(--dsw-alias-bg-layer-2);
+}
+.dshbm-table tbody td {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
+  color: var(--dsw-alias-label-secondary);
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dshbm-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.dshbm-table tbody td[data-primary="true"] {
+  color: var(--dsw-alias-label-primary);
+}
+.dshbm-table .dshbm-sortButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  max-width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+.dshbm-table .dshbm-sortButton:hover {
+  color: var(--dsw-alias-label-primary);
+}
+
+/* Column density follows the panel width, never the viewport. */
+.dshbm-col-optional {
+  display: none;
+}
+@container dshbm (min-width: 830px) {
+  .dshbm-col-optional {
+    display: table-cell;
+  }
+}
+.dshbm-col-wide {
+  display: none;
+}
+@container dshbm (min-width: 980px) {
+  .dshbm-col-wide {
+    display: table-cell;
+  }
+}
+
+.dshbm-rowTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.dshbm-rowTitleText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dshbm-compactRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.dshbm-compactRow:hover {
+  background: var(--dsw-alias-bg-layer-2);
+}
+.dshbm-compactRow[data-selected="true"] {
+  background: color-mix(in srgb, var(--dsw-alias-brand-primary) 9%, transparent);
+}
+
+.dshbm-prose {
+  margin: 0;
+  color: var(--dsw-alias-label-primary);
+  font-family: var(--dshbm-font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.dshbm-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 4px;
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-tertiary);
+  font-family: var(--dshbm-font-mono);
+  font-size: 10px;
+}
+
+.dshbm-skeleton {
+  border-radius: 4px;
+  background: var(--dsw-alias-bg-layer-2);
+  animation: dshbm-pulse 1.4s ease-in-out infinite;
+}
+@keyframes dshbm-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.dshbm-checker {
+  position: relative;
+  border-color: var(--dsw-alias-border-l2);
+  background: var(--dsw-alias-bg-base);
+}
+.dshbm-checker[data-state="checked"] {
+  border-color: var(--dsw-alias-brand-primary);
+  background: var(--dsw-alias-brand-primary);
+  color: var(--dsw-alias-bg-base);
+}
+
+.dshbm-dialogOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  background: rgba(7, 9, 13, 0.52);
+  backdrop-filter: blur(1.5px);
+  animation: dshbm-fade 100ms ease-out;
+}
+.dshbm-dialogContent {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 2147483001;
+  width: min(520px, calc(100vw - 32px));
+  max-height: min(720px, calc(100vh - 48px));
+  overflow: auto;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 12px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.35),
+    0 2px 8px rgba(0, 0, 0, 0.16);
+  animation: dshbm-pop 120ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.dshbm-popoverContent {
+  z-index: 2147483002;
+  min-width: 180px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+  box-shadow: 0 12px 42px rgba(0, 0, 0, 0.28);
+}
+@keyframes dshbm-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dshbm-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -49%) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Status and priority tones use Harness alias tokens so light/dark follow the app. */
+.dshbm-tone-neutral {
+  border-color: var(--dsw-alias-border-l2);
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-secondary);
+}
+.dshbm-tone-progress {
+  border-color: color-mix(in srgb, var(--dsw-alias-brand-primary) 28%, transparent);
+  background: color-mix(in srgb, var(--dsw-alias-brand-primary) 11%, transparent);
+  color: var(--dsw-alias-brand-primary);
+}
+.dshbm-tone-done {
+  border-color: color-mix(in srgb, var(--dsw-alias-state-success-primary) 30%, transparent);
+  background: color-mix(in srgb, var(--dsw-alias-state-success-primary) 12%, transparent);
+  color: var(--dsw-alias-state-success-primary);
+}
+.dshbm-tone-warn {
+  border-color: color-mix(in srgb, var(--dsw-alias-state-warn-primary) 30%, transparent);
+  background: color-mix(in srgb, var(--dsw-alias-state-warn-primary) 12%, transparent);
+  color: var(--dsw-alias-state-warn-label);
+}
+.dshbm-tone-error {
+  border-color: color-mix(in srgb, var(--dsw-alias-state-error-primary) 30%, transparent);
+  background: color-mix(in srgb, var(--dsw-alias-state-error-primary) 11%, transparent);
+  color: var(--dsw-alias-state-error-primary);
+}
+.dshbm-tone-review {
+  border-color: color-mix(in srgb, var(--dsw-alias-state-business-primary) 30%, transparent);
+  background: color-mix(in srgb, var(--dsw-alias-state-business-primary) 12%, transparent);
+  color: var(--dsw-alias-state-business-primary);
+}
+
+.dshbm-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 999px;
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.dshbm-panel {
+  position: relative;
+}
+.dshbm-toast {
+  position: absolute;
+  right: 12px;
+  bottom: 44px;
+  z-index: 40;
+  max-width: calc(100% - 24px);
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 8px;
+  background: var(--dsw-alias-toast-bg);
+  color: var(--dsw-alias-toast-label);
+  padding: 6px 10px;
+  font-size: 11px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+/* Keep container-hidden columns from reserving fixed-layout width. */
+.dshbm-col-optionalCol {
+  display: none;
+}
+@container dshbm (min-width: 830px) {
+  .dshbm-col-optionalCol {
+    display: table-column;
+  }
+}
+.dshbm-col-wideCol {
+  display: none;
+}
+@container dshbm (min-width: 980px) {
+  .dshbm-col-wideCol {
+    display: table-column;
+  }
+}
+
+.dshbm-table thead th[data-compact="true"],
+.dshbm-table tbody td[data-compact="true"] {
+  padding-left: 2px;
+  padding-right: 2px;
+  text-align: center;
+}
