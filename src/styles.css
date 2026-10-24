@@ -82,8 +82,8 @@
   outline-offset: 1px;
 }
 .dshbm-trigger[data-active="true"] {
-  background: var(--dsw-alias-bg-layer-3);
-  border-color: var(--dsw-alias-border-l2);
+  background: transparent;
+  border-color: transparent;
   color: var(--dsw-alias-brand-primary);
 }
 .dshbm-tabTitle {
