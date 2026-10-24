@@ -154,6 +154,27 @@ export function compareTasks(left: BacklogTask, right: BacklogTask): number {
   return left.id.localeCompare(right.id, undefined, { numeric: true });
 }
 
+/**
+ * Workflow rank for the list's default order: active work first, queued work
+ * second, completed work last. Custom statuses between those poles group with
+ * the queued work.
+ */
+export function taskStatusRank(status: string, statuses: string[]): number {
+  if (isDoneStatus(status, statuses)) return 2;
+  if (/progress|doing|active|started|working/.test(status.trim().toLowerCase())) return 0;
+  return 1;
+}
+
+/** Status-first comparison with the stable ordinal/ID order as the tie-breaker. */
+export function compareTaskStatus(
+  left: BacklogTask,
+  right: BacklogTask,
+  statuses: string[],
+): number {
+  const rank = taskStatusRank(left.status, statuses) - taskStatusRank(right.status, statuses);
+  return rank !== 0 ? rank : compareTasks(left, right);
+}
+
 /** Build the explicit parent/child tree Backlog.md stores in each task's frontmatter. */
 export function buildTaskTree(tasks: BacklogTask[]): {
   tree: TaskNode[];

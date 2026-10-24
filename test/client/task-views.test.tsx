@@ -58,13 +58,19 @@ const tasks: BacklogTask[] = [
     labels: [],
     dependencies: [],
     createdDate: '2026-10-24T19:03:00Z',
-    ordinal: 3000,
+    ordinal: 500,
   },
 ];
 
-function Harness({ onOpen }: { onOpen: (task: BacklogTask) => void }) {
+function Harness({
+  onOpen,
+  initialSorting = [],
+}: {
+  onOpen: (task: BacklogTask) => void;
+  initialSorting?: SortingState;
+}) {
   const hierarchy = React.useMemo(() => buildTaskTree(tasks), []);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>(initialSorting);
   const [expanded, setExpanded] = React.useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const columns = useBacklogColumns({
@@ -134,6 +140,16 @@ describe('responsive task presentations', () => {
         (row) => row.querySelector('.dshbm-rowTitleText')?.textContent,
       );
     expect(rowTitles()).toEqual(['Alpha solo', 'Zulu parent']);
+  });
+
+  it('defaults to In Progress first and To Do after it', () => {
+    const { container } = render(
+      <Harness onOpen={vi.fn()} initialSorting={[{ id: 'status', desc: false }]} />,
+    );
+    const titles = [...container.querySelectorAll('.dshbm-compactRow .dshbm-compactTitle')].map(
+      (node) => node.textContent,
+    );
+    expect(titles).toEqual(['Zulu parent', 'Alpha solo']);
   });
 
   it('opens task details from a row click without losing the shared state', () => {

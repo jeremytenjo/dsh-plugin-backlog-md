@@ -133,6 +133,10 @@ narrows it further; Exclude status, Priority, Milestone, Label, and Assignee liv
 filters** resets everything. Filter, sorting, column visibility, and page size are persisted per
 workspace in `localStorage`; no task data is stored there.
 
+Both presentations open in attention order: **In Progress** first, **To Do** second, **Done** last,
+with the Backlog.md ordinal then natural ID as the tie-breaker inside a status. Clicking a column
+header overrides that default for the current workspace.
+
 ### Wide table
 
 Columns: ID, Title (with subtask progress), Status, Priority, Ordinal, Labels, Assignee, Milestone,

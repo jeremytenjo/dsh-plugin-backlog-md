@@ -11,7 +11,13 @@ import {
   Send,
 } from 'lucide-react';
 import * as React from 'react';
-import { compareTasks, milestoneLabel, relativeDate, subtaskProgress } from '../lib/utils';
+import {
+  compareTaskStatus,
+  compareTasks,
+  milestoneLabel,
+  relativeDate,
+  subtaskProgress,
+} from '../lib/utils';
 import type { BacklogMilestone, BacklogTask, TaskNode } from '../types';
 import { AvatarStack, LabelChips, PriorityBadge, ProgressRing, StatusBadge } from './badges';
 import { Checkbox } from './ui/checkbox';
@@ -159,6 +165,8 @@ export function useBacklogColumns({
         size: 96,
         header: ({ column }) => <SortHeader label="Status" column={column} />,
         cell: ({ row }) => <StatusBadge status={row.original.status} statuses={statuses} />,
+        sortingFn: (left, right) => compareTaskStatus(left.original, right.original, statuses),
+        sortDescFirst: false,
         meta: { label: 'Status', toggleable: true },
       },
       {

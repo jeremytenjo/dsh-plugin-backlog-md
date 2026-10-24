@@ -80,9 +80,11 @@ export function BacklogWorkspace({
     () => ({ ...filters, query: deferredQuery }),
     [filters, deferredQuery],
   );
+  // The list opens on the work that needs attention: In Progress, then To Do,
+  // then Done. Any column sort still overrides this default.
   const [sorting, setSorting] = usePersistedState<SortingState>(
-    `dsh.backlog-md.sorting.v1.${workspaceKey}`,
-    [],
+    `dsh.backlog-md.sorting.v2.${workspaceKey}`,
+    [{ id: 'status', desc: false }],
   );
   const [columnVisibility, setColumnVisibility] = usePersistedState<VisibilityState>(
     `dsh.backlog-md.columns.v1.${workspaceKey}`,

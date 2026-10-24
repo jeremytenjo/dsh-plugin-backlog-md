@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildTaskTree,
+  compareTaskStatus,
   compareTasks,
   isDoneStatus,
   milestoneLabel,
@@ -142,6 +143,41 @@ describe('task hierarchy', () => {
       'TASK-2',
       'TASK-3',
     ]);
+  });
+});
+
+describe('default list order', () => {
+  const rows = [
+    task({ id: 'TASK-1', status: 'Done', ordinal: 100 }),
+    task({ id: 'TASK-2', status: 'To Do', ordinal: 200 }),
+    task({ id: 'TASK-3', status: 'In Progress', ordinal: 300 }),
+    task({ id: 'TASK-4', status: 'In Review', ordinal: 400 }),
+  ];
+  const order = (list: BacklogTask[], workflow = statuses) =>
+    [...list]
+      .sort((left, right) => compareTaskStatus(left, right, workflow))
+      .map((item) => item.id);
+
+  it('puts In Progress first, To Do second and Done third', () => {
+    expect(order(rows)).toEqual(['TASK-3', 'TASK-2', 'TASK-4', 'TASK-1']);
+  });
+
+  it('keeps ordinal then natural ID as the tie-breaker inside a status', () => {
+    const tied = [
+      task({ id: 'TASK-9', status: 'In Progress', ordinal: 200 }),
+      task({ id: 'TASK-8', status: 'In Progress', ordinal: 100 }),
+      task({ id: 'TASK-10', status: 'In Progress', ordinal: 100 }),
+    ];
+    expect(order(tied)).toEqual(['TASK-8', 'TASK-10', 'TASK-9']);
+  });
+
+  it('treats a custom final status as done', () => {
+    const workflow = ['To Do', 'In Progress', 'Completed'];
+    const custom = [
+      task({ id: 'TASK-1', status: 'Completed' }),
+      task({ id: 'TASK-2', status: 'To Do' }),
+    ];
+    expect(order(custom, workflow)).toEqual(['TASK-2', 'TASK-1']);
   });
 });
 
