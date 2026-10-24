@@ -1,8 +1,11 @@
+import { Check, Columns3, Search, SlidersHorizontal, X } from 'lucide-react';
 import * as React from 'react';
 
 import type { BacklogFilters } from '../types';
+import { EMPTY_FILTERS } from '../types';
 import { Button } from './ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 function allValue(value: string) {
   return value || '__all__';
@@ -22,33 +25,45 @@ function FilterSelect({
   value,
   options,
   onChange,
-  width = 'dshbm-w-[120px]',
 }: {
   label: string;
   value: string;
   options: SelectOption[];
   onChange: (value: string) => void;
-  width?: string;
 }) {
   return (
-    <label className="dshbm-inline-flex dshbm-items-center dshbm-gap-1.5">
-      <span className="dshbm-text-2xs dshbm-text-muted-foreground">{label}</span>
-      <Select value={allValue(value)} onValueChange={(next) => onChange(fromAllValue(next))}>
-        <SelectTrigger aria-label={label} className={`dshbm-h-6 ${width} dshbm-text-2xs`}>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="__all__">All</SelectItem>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+    <Select value={allValue(value)} onValueChange={(next) => onChange(fromAllValue(next))}>
+      <SelectTrigger aria-label={label} className="dshbm-h-7 dshbm-text-[12px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="__all__">All</SelectItem>
+        {options.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="dshbm-filterField">
+      <span className="dshbm-filterFieldLabel">{label}</span>
+      {children}
     </label>
   );
 }
+
+const SUMMARY_FIELDS: Array<[keyof BacklogFilters, string]> = [
+  ['excludeStatus', 'Exclude'],
+  ['priority', 'Priority'],
+  ['milestone', 'Milestone'],
+  ['label', 'Label'],
+  ['assignee', 'Assignee'],
+];
 
 export function BacklogFilters({
   filters,
@@ -73,108 +88,117 @@ export function BacklogFilters({
   onColumnVisibilityChange: (next: Record<string, boolean>) => void;
   columns: Array<{ id: string; label: string }>;
 }) {
-  const activeCount = React.useMemo(
-    () =>
-      Object.entries(filters).filter(([key, value]) => {
-        if (key === 'query') return false;
-        return Boolean(value);
-      }).length + (filters.query.trim() ? 1 : 0),
-    [filters],
-  );
+  const [open, setOpen] = React.useState(false);
+  const active = SUMMARY_FIELDS.filter(([key]) => Boolean(filters[key]));
+  const clear = () => onChange(EMPTY_FILTERS);
   const set = (patch: Partial<BacklogFilters>) => onChange({ ...filters, ...patch });
-  const clear = () =>
-    onChange({
-      query: '',
-      status: '',
-      excludeStatus: '',
-      priority: '',
-      milestone: '',
-      label: '',
-      assignee: '',
-    });
 
   return (
-    <div className="dshbm-flex dshbm-flex-none dshbm-flex-col dshbm-gap-1.5 dshbm-border-b dshbm-border-border dshbm-px-3 dshbm-py-2">
-      <div className="dshbm-flex dshbm-flex-wrap dshbm-items-center dshbm-gap-1.5">
-        <div className="dshbm-relative dshbm-min-w-[150px] dshbm-flex-1">
-          <svg
-            className="dshbm-pointer-events-none dshbm-absolute dshbm-left-2 dshbm-top-1/2 dshbm-h-3 dshbm-w-3 dshbm--translate-y-1/2 dshbm-text-muted-foreground"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            aria-hidden="true"
-          >
-            <circle cx="11" cy="11" r="7" />
-            <path d="m20 20-3.5-3.5" />
-          </svg>
+    <div className="dshbm-flex dshbm-flex-none dshbm-flex-col">
+      <div className="dshbm-toolbar">
+        <div className="dshbm-searchField">
+          <Search className="dshbm-searchIcon" strokeWidth={1.8} aria-hidden="true" />
           <input
+            type="search"
             value={filters.query}
             onChange={(event) => set({ query: event.target.value })}
-            placeholder="Search tasks…"
+            placeholder="Search tasks"
             aria-label="Search tasks"
-            className="dshbm-h-7 dshbm-w-full dshbm-rounded-md dshbm-border dshbm-border-border dshbm-bg-transparent dshbm-pl-7 dshbm-pr-2 dshbm-text-xs dshbm-text-foreground placeholder:dshbm-text-muted-foreground focus-visible:dshbm-outline-none focus-visible:dshbm-ring-1 focus-visible:dshbm-ring-ring"
+            className="dshbm-searchInput [&::-webkit-search-cancel-button]:dshbm-hidden"
           />
+          {filters.query ? (
+            <button
+              type="button"
+              className="dshbm-searchClear"
+              onClick={() => set({ query: '' })}
+              aria-label="Clear search"
+            >
+              <X size={12} />
+            </button>
+          ) : null}
         </div>
-        <FilterSelect
-          label="Status"
-          value={filters.status}
-          options={statuses.map((status) => ({ value: status, label: status }))}
-          onChange={(status) => set({ status })}
-        />
-        <FilterSelect
-          label="Exclude"
-          value={filters.excludeStatus}
-          options={statuses.map((status) => ({ value: status, label: status }))}
-          onChange={(excludeStatus) => set({ excludeStatus })}
-        />
-        <FilterSelect
-          label="Priority"
-          value={filters.priority}
-          options={priorities.map((priority) => ({ value: priority, label: priority }))}
-          onChange={(priority) => set({ priority })}
-          width="dshbm-w-[104px]"
-        />
-        <FilterSelect
-          label="Milestone"
-          value={filters.milestone}
-          options={milestones.map((milestone) => ({ value: milestone, label: milestone }))}
-          onChange={(milestone) => set({ milestone })}
-          width="dshbm-w-[130px]"
-        />
-        <FilterSelect
-          label="Label"
-          value={filters.label}
-          options={labels.map((label) => ({ value: label, label }))}
-          onChange={(label) => set({ label })}
-          width="dshbm-w-[110px]"
-        />
-        <FilterSelect
-          label="Assignee"
-          value={filters.assignee}
-          options={assignees.map((assignee) => ({ value: assignee, label: assignee }))}
-          onChange={(assignee) => set({ assignee })}
-          width="dshbm-w-[120px]"
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="dshbm-filterToggle dshbm-flex-none"
+          data-open={open ? 'true' : undefined}
+          data-filter-toggle=""
+          aria-expanded={open}
+          aria-controls="backlog-filter-panel"
+          onClick={() => setOpen((value) => !value)}
+        >
+          <SlidersHorizontal size={12} strokeWidth={1.8} />
+          Filters
+          {active.length > 0 ? <span className="dshbm-filterCount">{active.length}</span> : null}
+        </Button>
+        <ColumnMenu
+          columnVisibility={columnVisibility}
+          onChange={onColumnVisibilityChange}
+          columns={columns}
         />
       </div>
-      <div className="dshbm-flex dshbm-items-center dshbm-gap-2">
-        {activeCount > 0 ? (
-          <Button type="button" variant="ghost" size="xs" onClick={clear}>
-            Clear {activeCount} {activeCount === 1 ? 'filter' : 'filters'}
-          </Button>
-        ) : (
-          <span className="dshbm-text-2xs dshbm-text-muted-foreground">
-            Filters combine. Search matches IDs, titles, labels, and assignees.
+
+      {open ? (
+        <div id="backlog-filter-panel" className="dshbm-filterPanel" data-filter-panel="">
+          <FilterField label="Exclude status">
+            <FilterSelect
+              label="Exclude status"
+              value={filters.excludeStatus}
+              options={statuses.map((status) => ({ value: status, label: status }))}
+              onChange={(excludeStatus) => set({ excludeStatus })}
+            />
+          </FilterField>
+          <FilterField label="Priority">
+            <FilterSelect
+              label="Priority"
+              value={filters.priority}
+              options={priorities.map((priority) => ({ value: priority, label: priority }))}
+              onChange={(priority) => set({ priority })}
+            />
+          </FilterField>
+          <FilterField label="Milestone">
+            <FilterSelect
+              label="Milestone"
+              value={filters.milestone}
+              options={milestones.map((milestone) => ({ value: milestone, label: milestone }))}
+              onChange={(milestone) => set({ milestone })}
+            />
+          </FilterField>
+          <FilterField label="Label">
+            <FilterSelect
+              label="Label"
+              value={filters.label}
+              options={labels.map((label) => ({ value: label, label }))}
+              onChange={(label) => set({ label })}
+            />
+          </FilterField>
+          <FilterField label="Assignee">
+            <FilterSelect
+              label="Assignee"
+              value={filters.assignee}
+              options={assignees.map((assignee) => ({ value: assignee, label: assignee }))}
+              onChange={(assignee) => set({ assignee })}
+            />
+          </FilterField>
+          {active.length > 0 || filters.query ? (
+            <div className="dshbm-filterPanelActions">
+              <Button type="button" variant="ghost" size="xs" onClick={clear}>
+                Clear filters
+              </Button>
+            </div>
+          ) : null}
+        </div>
+      ) : active.length > 0 ? (
+        <div className="dshbm-filterSummary">
+          <span className="dshbm-filterSummaryText">
+            {active.map(([key, label]) => `${label}: ${String(filters[key])}`).join(' · ')}
           </span>
-        )}
-        <div className="dshbm-ml-auto">
-          <ColumnMenu
-            columnVisibility={columnVisibility}
-            onChange={onColumnVisibilityChange}
-            columns={columns}
-          />
+          <Button type="button" variant="ghost" size="xs" onClick={clear}>
+            Clear
+          </Button>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }
@@ -190,17 +214,23 @@ function ColumnMenu({
 }) {
   const [open, setOpen] = React.useState(false);
   return (
-    <div className="dshbm-relative">
-      <Button
-        type="button"
-        variant="ghost"
-        size="xs"
-        onClick={() => setOpen((value) => !value)}
-        aria-haspopup="menu"
-        aria-expanded={open}
-      >
-        Columns
-      </Button>
+    <div className="dshbm-relative dshbm-flex-none">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="iconSm"
+            onClick={() => setOpen((value) => !value)}
+            aria-haspopup="menu"
+            aria-expanded={open}
+            aria-label="Show columns"
+          >
+            <Columns3 size={14} strokeWidth={1.7} />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Show columns</TooltipContent>
+      </Tooltip>
       {open ? (
         <>
           <div
@@ -210,24 +240,29 @@ function ColumnMenu({
           />
           <div
             role="menu"
-            className="dshbm-popoverContent dshbm-absolute dshbm-right-0 dshbm-top-7 dshbm-z-[2147483001] dshbm-w-[170px] dshbm-p-1"
+            className="dshbm-popoverContent dshbm-absolute dshbm-right-0 dshbm-top-8 dshbm-z-[2147483001] dshbm-w-[190px] dshbm-p-1"
           >
-            {columns.map((column) => (
-              <label
-                key={column.id}
-                className="dshbm-flex dshbm-cursor-pointer dshbm-items-center dshbm-gap-2 dshbm-rounded-sm dshbm-px-2 dshbm-py-1.5 dshbm-text-xs hover:dshbm-bg-accent"
-              >
-                <input
-                  type="checkbox"
-                  checked={columnVisibility[column.id] !== false}
-                  onChange={(event) =>
-                    onChange({ ...columnVisibility, [column.id]: event.target.checked })
-                  }
-                  className="dshbm-h-3 dshbm-w-3 dshbm-accent-[var(--dsw-alias-brand-primary)]"
-                />
-                {column.label}
-              </label>
-            ))}
+            <div className="dshbm-px-2 dshbm-py-1.5 dshbm-text-[11.5px] dshbm-text-muted-foreground">
+              Show columns
+            </div>
+            {columns.map((column) => {
+              const shown = columnVisibility[column.id] !== false;
+              return (
+                <button
+                  key={column.id}
+                  type="button"
+                  role="menuitemcheckbox"
+                  aria-checked={shown}
+                  onClick={() => onChange({ ...columnVisibility, [column.id]: !shown })}
+                  className="dshbm-flex dshbm-w-full dshbm-items-center dshbm-gap-2 dshbm-rounded-sm dshbm-px-2 dshbm-py-1.5 dshbm-text-left dshbm-text-[12px] dshbm-text-foreground hover:dshbm-bg-accent"
+                >
+                  <span className="dshbm-flex dshbm-h-3.5 dshbm-w-3.5 dshbm-flex-none dshbm-items-center dshbm-justify-center dshbm-rounded-[4px] dshbm-border dshbm-border-border">
+                    {shown ? <Check size={10} strokeWidth={2.6} /> : null}
+                  </span>
+                  {column.label}
+                </button>
+              );
+            })}
           </div>
         </>
       ) : null}

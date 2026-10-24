@@ -1,8 +1,7 @@
-import { ListTodo } from 'lucide-react';
 import * as React from 'react';
-
 import { BacklogLauncher, TAB_KIND } from './client/components/BacklogLauncher';
 import { BacklogPanel } from './client/components/BacklogPanel';
+import { BacklogMark } from './client/components/badges';
 import { ensureTailwindStyles, removeTailwindStyles } from './client/lib/styles';
 
 const NS = 'dshBacklogMd';
@@ -34,12 +33,7 @@ function translate(ctx: { locale: { bind: (ns: string) => (key: string) => strin
 }
 
 function TitleIcon() {
-  return h(ListTodo, {
-    size: 15,
-    strokeWidth: 1.5,
-    'aria-hidden': true,
-    focusable: false,
-  });
+  return h(BacklogMark, { size: 15 });
 }
 
 export const inject = ['slots', 'locale', 'sidebarRightTabs', 'sidebarRight'];

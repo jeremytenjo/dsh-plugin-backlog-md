@@ -9,7 +9,7 @@ export const Input = React.forwardRef<
   <input
     ref={ref}
     className={cn(
-      'dshbm-flex dshbm-h-7 dshbm-w-full dshbm-rounded-md dshbm-border dshbm-border-border dshbm-bg-transparent dshbm-px-2 dshbm-text-xs dshbm-text-foreground placeholder:dshbm-text-muted-foreground focus-visible:dshbm-outline-none focus-visible:dshbm-ring-1 focus-visible:dshbm-ring-ring disabled:dshbm-opacity-50',
+      'dshbm-flex dshbm-h-8 dshbm-w-full dshbm-rounded-md dshbm-border dshbm-border-border dshbm-bg-background dshbm-px-2 dshbm-text-[12.5px] dshbm-text-foreground placeholder:dshbm-text-muted-foreground hover:dshbm-border-[var(--dsw-alias-border-l3)] focus-visible:dshbm-outline-none focus-visible:dshbm-ring-1 focus-visible:dshbm-ring-ring disabled:dshbm-opacity-50',
       className,
     )}
     {...props}
@@ -24,7 +24,7 @@ export const Textarea = React.forwardRef<
   <textarea
     ref={ref}
     className={cn(
-      'dshbm-flex dshbm-min-h-24 dshbm-w-full dshbm-resize-y dshbm-rounded-md dshbm-border dshbm-border-border dshbm-bg-transparent dshbm-px-2 dshbm-py-1.5 dshbm-text-xs dshbm-text-foreground placeholder:dshbm-text-muted-foreground focus-visible:dshbm-outline-none focus-visible:dshbm-ring-1 focus-visible:dshbm-ring-ring disabled:dshbm-opacity-50',
+      'dshbm-flex dshbm-min-h-24 dshbm-w-full dshbm-resize-y dshbm-rounded-md dshbm-border dshbm-border-border dshbm-bg-background dshbm-px-2.5 dshbm-py-2 dshbm-text-[12.5px] dshbm-leading-relaxed dshbm-text-foreground placeholder:dshbm-text-muted-foreground hover:dshbm-border-[var(--dsw-alias-border-l3)] focus-visible:dshbm-outline-none focus-visible:dshbm-ring-1 focus-visible:dshbm-ring-ring disabled:dshbm-opacity-50',
       className,
     )}
     {...props}
@@ -38,10 +38,7 @@ export const Label = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <label
     ref={ref}
-    className={cn(
-      'dshbm-text-2xs dshbm-font-medium dshbm-uppercase dshbm-tracking-wide dshbm-text-muted-foreground',
-      className,
-    )}
+    className={cn('dshbm-text-[11.5px] dshbm-font-medium dshbm-text-muted-foreground', className)}
     {...props}
   />
 ));

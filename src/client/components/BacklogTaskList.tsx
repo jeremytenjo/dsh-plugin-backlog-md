@@ -46,6 +46,7 @@ export function BacklogTaskList({
             role="listitem"
             className="dshbm-compactRow"
             data-selected={row.getIsSelected() ? 'true' : undefined}
+            aria-selected={row.getIsSelected()}
             tabIndex={0}
             onClick={() => onRowOpen(task)}
             onKeyDown={(event) => {
@@ -54,10 +55,10 @@ export function BacklogTaskList({
                 onRowOpen(task);
               }
             }}
-            style={{ paddingLeft: 10 + Math.min(row.depth, 6) * 13 }}
+            style={{ paddingLeft: 12 + Math.min(row.depth, 6) * 14 }}
           >
             <span
-              className="dshbm-mt-0.5 dshbm-flex dshbm-flex-none"
+              className="dshbm-mt-1 dshbm-flex dshbm-flex-none"
               onClick={(event) => event.stopPropagation()}
               onKeyDown={(event) => event.stopPropagation()}
             >
@@ -68,11 +69,11 @@ export function BacklogTaskList({
               />
             </span>
             <div className="dshbm-min-w-0 dshbm-flex-1">
-              <div className="dshbm-flex dshbm-items-center dshbm-gap-1.5">
+              <div className="dshbm-flex dshbm-min-w-0 dshbm-items-center dshbm-gap-1.5">
                 {row.getCanExpand() ? (
                   <button
                     type="button"
-                    className="dshbm-inline-flex dshbm-h-4 dshbm-w-4 dshbm-flex-none dshbm-items-center dshbm-justify-center dshbm-rounded dshbm-text-muted-foreground hover:dshbm-bg-accent hover:dshbm-text-foreground"
+                    className="dshbm-inline-flex dshbm-h-5 dshbm-w-5 dshbm-flex-none dshbm-items-center dshbm-justify-center dshbm-rounded dshbm-text-muted-foreground hover:dshbm-bg-accent hover:dshbm-text-foreground"
                     onClick={(event) => {
                       event.stopPropagation();
                       row.toggleExpanded();
@@ -80,10 +81,10 @@ export function BacklogTaskList({
                     aria-label={row.getIsExpanded() ? 'Collapse subtasks' : 'Expand subtasks'}
                     aria-expanded={row.getIsExpanded()}
                   >
-                    {row.getIsExpanded() ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                    {row.getIsExpanded() ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
                   </button>
                 ) : null}
-                <span className="dshbm-min-w-0 dshbm-flex-1 dshbm-truncate dshbm-text-xs dshbm-font-medium dshbm-text-foreground">
+                <span className="dshbm-compactTitle" title={task.title}>
                   {task.title}
                 </span>
                 {progress.total > 0 ? (
@@ -91,11 +92,11 @@ export function BacklogTaskList({
                 ) : null}
                 <StatusBadge status={task.status} statuses={statuses} />
               </div>
-              <div className="dshbm-mt-1 dshbm-flex dshbm-flex-wrap dshbm-items-center dshbm-gap-x-2 dshbm-gap-y-1 dshbm-text-2xs dshbm-text-muted-foreground">
-                <span className="dshbm-font-mono dshbm-tabular-nums">{task.id}</span>
+              <div className="dshbm-compactMeta">
+                <span className="dshbm-idCell">{task.id}</span>
                 {task.priority ? <PriorityBadge priority={task.priority} /> : null}
                 {task.assignee.length > 0 ? <AvatarStack names={task.assignee} max={1} /> : null}
-                <span>{relativeDate(task.createdDate)}</span>
+                <span title={task.createdDate}>{relativeDate(task.createdDate)}</span>
               </div>
             </div>
             <span

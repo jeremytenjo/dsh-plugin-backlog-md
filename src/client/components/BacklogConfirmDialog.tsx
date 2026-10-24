@@ -47,7 +47,7 @@ export function BacklogConfirmDialog({
           <DialogDescription id="backlog-confirm-description">{description}</DialogDescription>
         </DialogHeader>
         {requireText ? (
-          <div className="dshbm-mb-3 dshbm-flex dshbm-flex-col dshbm-gap-1">
+          <div className="dshbm-mb-3 dshbm-flex dshbm-flex-col dshbm-gap-1.5">
             <Label htmlFor="backlog-confirm-input">
               Type <code className="dshbm-font-mono">{requireText}</code> to confirm
             </Label>
@@ -60,7 +60,7 @@ export function BacklogConfirmDialog({
           </div>
         ) : null}
         {error ? (
-          <p className="dshbm-m-0 dshbm-rounded-md dshbm-bg-destructive/10 dshbm-px-2 dshbm-py-1.5 dshbm-text-2xs dshbm-text-destructive">
+          <p className="dshbm-m-0 dshbm-errorBox dshbm-rounded-md dshbm-px-2.5 dshbm-py-2 dshbm-text-[12px] dshbm-text-destructive">
             {error}
           </p>
         ) : null}

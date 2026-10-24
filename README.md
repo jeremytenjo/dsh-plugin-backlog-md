@@ -127,21 +127,23 @@ state.
 
 ### Filters
 
-Search, Status, Exclude status, Priority, Milestone, Labels, and Assignee combine without reloads.
-The filtered count appears in the header; **Clear filters** resets everything. Filter, sorting,
-column visibility, and page size are persisted per workspace in `localStorage`; no task data is
-stored there.
+The status strip above the list shows a count per status and doubles as the status filter. Search
+narrows it further; Exclude status, Priority, Milestone, Label, and Assignee live behind the
+**Filters** control and combine without reloads. The header shows the filtered count; **Clear
+filters** resets everything. Filter, sorting, column visibility, and page size are persisted per
+workspace in `localStorage`; no task data is stored there.
 
 ### Wide table
 
 Columns: ID, Title (with subtask progress), Status, Priority, Ordinal, Labels, Assignee, Milestone,
 Created, and row actions. The table has sticky headers, compact rows, hover and focus states,
-column sorting, row selection, expandable subtasks, and configurable column visibility. At narrower
-panel widths, fixed-layout columns leave the DOM and become available again as the container grows.
+column sorting, row selection (send selected tasks to the composer), expandable subtasks, and
+configurable column visibility. At narrower panel widths, fixed-layout columns leave the DOM and
+become available again as the container grows.
 
 ### Compact list
 
-Below the panel container's 600px breakpoint, the compact list shows the title, ID, subtask
+Below the panel container's 640px breakpoint, the compact list shows the title, ID, subtask
 progress, status, priority, assignee, and relative creation time. It never requires horizontal
 scroll. Both presentations read the same TanStack Table instance, so switching widths keeps the
 same filter, sort, selection, expansion, pagination, and detail handlers.

@@ -12,7 +12,7 @@ import {
   useReactTable,
   type VisibilityState,
 } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight, ListChecks, Plus, RefreshCw, SearchX } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, RefreshCw, Send } from 'lucide-react';
 import * as React from 'react';
 import {
   useArchiveBacklogTask,
@@ -34,6 +34,7 @@ import { BacklogConfirmDialog } from './BacklogConfirmDialog';
 import { BacklogCreateTaskDialog, type CreateTaskInput } from './BacklogCreateTaskDialog';
 import { BacklogFilters as BacklogFiltersBar } from './BacklogFilters';
 import { BacklogHeader } from './BacklogHeader';
+import { BacklogStatusSummary } from './BacklogStatusSummary';
 import { BacklogTaskDetails } from './BacklogTaskDetails';
 import { BacklogTaskList } from './BacklogTaskList';
 import { BacklogTaskTable } from './BacklogTaskTable';
@@ -49,11 +50,13 @@ export function BacklogWorkspace({
   status,
   sessionId,
   sendToChat,
+  sendTasksToChat,
   tabVisible,
 }: {
   status: BacklogReadyStatus;
   sessionId: string;
   sendToChat: (task: BacklogTask) => boolean;
+  sendTasksToChat: (tasks: BacklogTask[]) => boolean;
   tabVisible: boolean;
 }) {
   const queryClient = useQueryClient();
@@ -133,6 +136,25 @@ export function BacklogWorkspace({
     () => unique(tasks.flatMap((task) => task.assignee)),
     [tasks],
   );
+
+  // Counts on the status strip are the rows the table would show, including the
+  // parent rows it keeps for context, so a click lands on the count it promised.
+  const statusSummary = React.useMemo(() => {
+    const rowCount = (filtersToCount: BacklogFilters) => {
+      const rows = new Set<string>();
+      for (const task of tasks) {
+        if (!taskMatchesFilters(task, filtersToCount, status.statuses, milestones)) continue;
+        rows.add(task.id);
+        for (const ancestor of hierarchy.ancestors.get(task.id) ?? []) rows.add(ancestor);
+      }
+      return rows.size;
+    };
+    const baseFilters = { ...effectiveFilters, status: '' };
+    const counts = new Map<string, number>(
+      statusOptions.map((value) => [value, rowCount({ ...baseFilters, status: value })]),
+    );
+    return { counts, total: rowCount(baseFilters) };
+  }, [effectiveFilters, hierarchy.ancestors, milestones, status.statuses, statusOptions, tasks]);
 
   const openTask = React.useCallback((task: BacklogTask) => {
     setSelectedTaskId(task.id);
@@ -226,6 +248,12 @@ export function BacklogWorkspace({
 
   const filteredCount = table.getFilteredRowModel().flatRows.length;
   const totalCount = tasks.length;
+  const selectedTasks = table.getSelectedRowModel().flatRows.map((row) => row.original);
+  const sendSelected = React.useCallback(() => {
+    if (selectedTasks.length === 0) return;
+    const sent = sendTasksToChat(selectedTasks);
+    if (sent) table.resetRowSelection();
+  }, [selectedTasks, sendTasksToChat, table]);
   const refreshing = tasksQuery.isFetching || milestonesQuery.isFetching;
   const page = table.getState().pagination;
   const pageCount = table.getPageCount();
@@ -333,11 +361,23 @@ export function BacklogWorkspace({
           setCreateOpen(true);
         }}
       />
+      <BacklogStatusSummary
+        statuses={statusOptions}
+        counts={statusSummary.counts}
+        total={statusSummary.total}
+        selected={filters.status}
+        onSelect={(nextStatus) => {
+          setFilters({ ...filters, status: nextStatus });
+          setPagination((current) => ({ ...current, pageIndex: 0 }));
+          table.resetRowSelection();
+        }}
+      />
       <BacklogFiltersBar
         filters={filters}
         onChange={(next) => {
           setFilters(next);
           setPagination((current) => ({ ...current, pageIndex: 0 }));
+          table.resetRowSelection();
         }}
         statuses={statusOptions}
         priorities={priorityOptions}
@@ -349,43 +389,55 @@ export function BacklogWorkspace({
         columns={TOGGLEABLE_COLUMNS}
       />
 
+      {selectedTasks.length > 0 ? (
+        <div className="dshbm-selectionBar">
+          <span className="dshbm-selectionCount">{selectedTasks.length} selected</span>
+          <Button type="button" variant="ghost" size="xs" onClick={sendSelected}>
+            <Send size={12} />
+            Send to chat
+          </Button>
+          <Button type="button" variant="ghost" size="xs" onClick={() => table.resetRowSelection()}>
+            Clear
+          </Button>
+        </div>
+      ) : null}
+
       {tasksQuery.isLoading ? (
-        <div className="dshbm-flex dshbm-flex-1 dshbm-flex-col dshbm-gap-1 dshbm-p-3">
-          {Array.from({ length: 12 }).map((_, index) => (
-            <span
-              key={index}
-              className="dshbm-skeleton"
-              style={{ height: 30, opacity: 1 - index * 0.05 }}
-            />
+        <div className="dshbm-flex dshbm-flex-1 dshbm-flex-col dshbm-px-3 dshbm-pt-2">
+          {Array.from({ length: 10 }).map((_, index) => (
+            <span key={index} className="dshbm-skeleton" style={{ height: 38, marginBottom: 1 }} />
           ))}
         </div>
       ) : tasksQuery.error ? (
-        <div className="dshbm-flex dshbm-flex-1 dshbm-flex-col dshbm-items-center dshbm-justify-center dshbm-gap-2 dshbm-p-4">
-          <p className="dshbm-m-0 dshbm-text-xs dshbm-text-muted-foreground">
-            {tasksQuery.error instanceof Error ? tasksQuery.error.message : 'Could not load tasks.'}
-          </p>
-          <Button type="button" variant="outline" size="sm" onClick={refresh}>
-            <RefreshCw size={12} />
-            Retry
-          </Button>
-        </div>
+        <EmptyState
+          title="Could not load tasks"
+          description={
+            tasksQuery.error instanceof Error
+              ? tasksQuery.error.message
+              : 'The Backlog.md server did not answer.'
+          }
+          action={
+            <Button type="button" variant="outline" size="sm" onClick={refresh}>
+              <RefreshCw size={12} />
+              Retry
+            </Button>
+          }
+        />
       ) : totalCount === 0 ? (
         <EmptyState
-          icon={<ListChecks size={22} />}
           title="No tasks yet"
           description="Create the first Backlog.md task. Agents can also add tasks with the Backlog.md CLI or MCP server."
           action={
             <Button type="button" size="sm" onClick={() => setCreateOpen(true)}>
               <Plus size={12} />
-              New Task
+              New task
             </Button>
           }
         />
       ) : filteredCount === 0 ? (
         <EmptyState
-          icon={<SearchX size={22} />}
           title="No tasks match"
-          description={`${totalCount} tasks are hidden by the current filters.`}
+          description={`${totalCount} tasks are hidden by the current search and filters.`}
           action={
             <Button
               type="button"
@@ -411,18 +463,18 @@ export function BacklogWorkspace({
         </>
       )}
 
-      <div className="dshbm-flex dshbm-flex-none dshbm-items-center dshbm-gap-2 dshbm-border-t dshbm-border-border dshbm-bg-background dshbm-px-3 dshbm-py-1.5 dshbm-text-2xs dshbm-text-muted-foreground">
+      <div className="dshbm-panelFooter">
         <span className="dshbm-tabular-nums">
           {filteredCount === 0 ? '0 tasks' : `${firstRow}–${lastRow} of ${filteredCount}`}
         </span>
-        <span className="dshbm-ml-auto dshbm-flex dshbm-items-center dshbm-gap-1.5">
+        <span className="dshbm-ml-auto dshbm-flex dshbm-items-center dshbm-gap-1">
           <span>Rows</span>
           <Select
             value={page.pageSize >= 100_000 ? 'all' : String(page.pageSize)}
             onValueChange={changePageSize}
           >
             <SelectTrigger
-              className="dshbm-h-6 dshbm-w-[74px] dshbm-text-2xs"
+              className="dshbm-h-6 dshbm-w-[70px] dshbm-text-[11px]"
               aria-label="Rows per page"
             >
               <SelectValue />
@@ -444,7 +496,7 @@ export function BacklogWorkspace({
           >
             <ChevronLeft size={12} />
           </Button>
-          <span className="dshbm-min-w-[44px] dshbm-text-center dshbm-tabular-nums">
+          <span className="dshbm-min-w-[40px] dshbm-text-center dshbm-tabular-nums">
             {pageCount === 0 ? '0 / 0' : `${page.pageIndex + 1} / ${pageCount}`}
           </span>
           <Button
@@ -486,26 +538,23 @@ export function BacklogWorkspace({
 }
 
 function EmptyState({
-  icon,
   title,
   description,
   action,
 }: {
-  icon: React.ReactNode;
   title: string;
   description: string;
   action: React.ReactNode;
 }) {
   return (
-    <div className="dshbm-flex dshbm-flex-1 dshbm-flex-col dshbm-items-center dshbm-justify-center dshbm-gap-2 dshbm-p-6 dshbm-text-center">
-      <span className="dshbm-flex dshbm-h-10 dshbm-w-10 dshbm-items-center dshbm-justify-center dshbm-rounded-full dshbm-bg-secondary dshbm-text-muted-foreground">
-        {icon}
-      </span>
-      <h3 className="dshbm-m-0 dshbm-text-xs dshbm-font-semibold dshbm-text-foreground">{title}</h3>
-      <p className="dshbm-m-0 dshbm-max-w-[280px] dshbm-text-2xs dshbm-leading-relaxed dshbm-text-muted-foreground">
-        {description}
-      </p>
-      {action}
+    <div className="dshbm-emptyWrap">
+      <div className="dshbm-empty">
+        <div className="dshbm-emptyText">
+          <p className="dshbm-emptyTitle">{title}</p>
+          <p className="dshbm-emptyBody">{description}</p>
+        </div>
+        <div className="dshbm-emptyAction">{action}</div>
+      </div>
     </div>
   );
 }

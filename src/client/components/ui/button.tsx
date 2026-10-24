@@ -5,7 +5,7 @@ import * as React from 'react';
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
-  'dshbm-inline-flex dshbm-items-center dshbm-justify-center dshbm-gap-1.5 dshbm-whitespace-nowrap dshbm-rounded-md dshbm-border-0 dshbm-text-xs dshbm-font-medium dshbm-transition-colors focus-visible:dshbm-outline-none focus-visible:dshbm-ring-2 focus-visible:dshbm-ring-ring focus-visible:dshbm-ring-offset-1 disabled:dshbm-pointer-events-none disabled:dshbm-opacity-45',
+  'dshbm-inline-flex dshbm-items-center dshbm-justify-center dshbm-gap-1.5 dshbm-whitespace-nowrap dshbm-rounded-md dshbm-text-xs dshbm-font-medium dshbm-transition-colors active:dshbm-translate-y-px focus-visible:dshbm-outline-none focus-visible:dshbm-ring-2 focus-visible:dshbm-ring-ring focus-visible:dshbm-ring-offset-1 disabled:dshbm-pointer-events-none disabled:dshbm-opacity-45',
   {
     variants: {
       variant: {
@@ -21,11 +21,11 @@ const buttonVariants = cva(
           'dshbm-bg-transparent dshbm-text-muted-foreground hover:dshbm-bg-secondary hover:dshbm-text-foreground',
       },
       size: {
-        default: 'dshbm-h-7 dshbm-px-2.5',
-        sm: 'dshbm-h-6 dshbm-px-2 dshbm-text-2xs',
-        xs: 'dshbm-h-6 dshbm-px-1.5 dshbm-text-2xs',
-        icon: 'dshbm-h-7 dshbm-w-7',
-        iconSm: 'dshbm-h-6 dshbm-w-6',
+        default: 'dshbm-h-8 dshbm-px-3',
+        sm: 'dshbm-h-7 dshbm-px-2.5 dshbm-text-[11.5px]',
+        xs: 'dshbm-h-7 dshbm-px-2 dshbm-text-[11.5px]',
+        icon: 'dshbm-h-8 dshbm-w-8',
+        iconSm: 'dshbm-h-7 dshbm-w-7',
       },
     },
     defaultVariants: {

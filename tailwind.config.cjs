@@ -56,7 +56,8 @@ module.exports = {
         mono: 'var(--dshbm-font-mono)',
       },
       fontSize: {
-        '2xs': ['10px', '14px'],
+        // Nothing in the panel sets type below 11px.
+        '2xs': ['11px', '15px'],
       },
     },
   },

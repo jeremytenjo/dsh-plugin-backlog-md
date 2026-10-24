@@ -15,7 +15,7 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'dshbm-flex dshbm-h-7 dshbm-w-full dshbm-items-center dshbm-justify-between dshbm-gap-1 dshbm-rounded-md dshbm-border dshbm-border-border dshbm-bg-transparent dshbm-px-2 dshbm-text-xs dshbm-text-foreground focus-visible:dshbm-outline-none focus-visible:dshbm-ring-1 focus-visible:dshbm-ring-ring disabled:dshbm-opacity-50 [&>span]:dshbm-truncate',
+      'dshbm-flex dshbm-h-8 dshbm-w-full dshbm-items-center dshbm-justify-between dshbm-gap-1 dshbm-rounded-md dshbm-border dshbm-border-border dshbm-bg-background dshbm-px-2 dshbm-text-[12.5px] dshbm-text-foreground hover:dshbm-border-[var(--dsw-alias-border-l3)] focus-visible:dshbm-outline-none focus-visible:dshbm-ring-1 focus-visible:dshbm-ring-ring disabled:dshbm-opacity-50 [&>span]:dshbm-truncate',
       className,
     )}
     {...props}
@@ -37,7 +37,7 @@ const SelectContent = React.forwardRef<
       ref={ref}
       position={position}
       className={cn(
-        'dshbm-popoverContent dshbm-relative dshbm-z-[2147483003] dshbm-max-h-72 dshbm-min-w-[8rem] dshbm-overflow-hidden dshbm-rounded-md',
+        'dshbm-ui dshbm-popoverContent dshbm-relative dshbm-z-[2147483003] dshbm-max-h-72 dshbm-min-w-[8rem] dshbm-overflow-hidden dshbm-rounded-md',
         position === 'popper' &&
           'data-[side=bottom]:dshbm-translate-y-1 data-[side=top]:-dshbm-translate-y-1',
         className,
@@ -63,7 +63,7 @@ const SelectLabel = React.forwardRef<
   <SelectPrimitive.Label
     ref={ref}
     className={cn(
-      'dshbm-px-2 dshbm-py-1 dshbm-text-2xs dshbm-font-medium dshbm-uppercase dshbm-tracking-wide dshbm-text-muted-foreground',
+      'dshbm-px-2 dshbm-py-1 dshbm-text-[11.5px] dshbm-font-medium dshbm-text-muted-foreground',
       className,
     )}
     {...props}
@@ -78,7 +78,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'dshbm-relative dshbm-flex dshbm-w-full dshbm-cursor-default dshbm-select-none dshbm-items-center dshbm-rounded-sm dshbm-py-1 dshbm-pl-6 dshbm-pr-2 dshbm-text-xs dshbm-outline-none focus:dshbm-bg-accent data-[disabled]:dshbm-pointer-events-none data-[disabled]:dshbm-opacity-50',
+      'dshbm-relative dshbm-flex dshbm-w-full dshbm-cursor-default dshbm-select-none dshbm-items-center dshbm-rounded-sm dshbm-py-1.5 dshbm-pl-6 dshbm-pr-2 dshbm-text-[12px] dshbm-outline-none focus:dshbm-bg-accent data-[disabled]:dshbm-pointer-events-none data-[disabled]:dshbm-opacity-50',
       className,
     )}
     {...props}

@@ -1,6 +1,8 @@
 import type { ColumnDef, RowData } from '@tanstack/react-table';
 import {
   Archive,
+  ArrowDown,
+  ArrowUp,
   ChevronDown,
   ChevronRight,
   MessageSquarePlus,
@@ -41,10 +43,16 @@ function SortHeader({
 }) {
   const sorted = column.getIsSorted();
   return (
-    <button type="button" className="dshbm-sortButton" onClick={column.getToggleSortingHandler()}>
+    <button
+      type="button"
+      className="dshbm-sortButton"
+      onClick={column.getToggleSortingHandler()}
+      aria-label={`Sort by ${label}`}
+    >
       {label}
-      {sorted === 'asc' ? <span aria-hidden="true">↑</span> : null}
-      {sorted === 'desc' ? <span aria-hidden="true">↓</span> : null}
+      <span className="dshbm-sortGlyph" aria-hidden="true">
+        {sorted === 'desc' ? <ArrowDown size={10} /> : <ArrowUp size={10} />}
+      </span>
     </button>
   );
 }
@@ -70,7 +78,7 @@ export function useBacklogColumns({
     () => [
       {
         id: 'select',
-        size: 26,
+        size: 28,
         enableSorting: false,
         enableHiding: false,
         header: ({ table }) => (
@@ -99,13 +107,9 @@ export function useBacklogColumns({
       {
         id: 'id',
         accessorKey: 'id',
-        size: 78,
+        size: 74,
         header: ({ column }) => <SortHeader label="ID" column={column} />,
-        cell: ({ row }) => (
-          <span className="dshbm-font-mono dshbm-text-2xs dshbm-tabular-nums dshbm-text-muted-foreground">
-            {row.original.id}
-          </span>
-        ),
+        cell: ({ row }) => <span className="dshbm-idCell">{row.original.id}</span>,
         meta: { label: 'ID', toggleable: true },
       },
       {
@@ -144,11 +148,6 @@ export function useBacklogColumns({
               {progress.total > 0 ? (
                 <ProgressRing done={progress.done} total={progress.total} />
               ) : null}
-              {row.original.parentTaskId ? (
-                <span className="dshbm-flex-none dshbm-text-2xs dshbm-text-muted-foreground/70">
-                  subtask
-                </span>
-              ) : null}
             </div>
           );
         },
@@ -157,7 +156,7 @@ export function useBacklogColumns({
       {
         id: 'status',
         accessorKey: 'status',
-        size: 100,
+        size: 96,
         header: ({ column }) => <SortHeader label="Status" column={column} />,
         cell: ({ row }) => <StatusBadge status={row.original.status} statuses={statuses} />,
         meta: { label: 'Status', toggleable: true },
@@ -165,7 +164,7 @@ export function useBacklogColumns({
       {
         id: 'priority',
         accessorKey: 'priority',
-        size: 74,
+        size: 72,
         header: ({ column }) => <SortHeader label="Priority" column={column} />,
         cell: ({ row }) => <PriorityBadge priority={row.original.priority} />,
         meta: { label: 'Priority', toggleable: true },
@@ -173,10 +172,10 @@ export function useBacklogColumns({
       {
         id: 'ordinal',
         accessorKey: 'ordinal',
-        size: 60,
+        size: 62,
         header: ({ column }) => <SortHeader label="Ordinal" column={column} />,
         cell: ({ row }) => (
-          <span className="dshbm-font-mono dshbm-text-2xs dshbm-tabular-nums">
+          <span className="dshbm-text-[11.5px] dshbm-tabular-nums">
             {typeof row.original.ordinal === 'number' ? row.original.ordinal : '—'}
           </span>
         ),
@@ -186,7 +185,7 @@ export function useBacklogColumns({
       {
         id: 'labels',
         accessorFn: (task) => task.labels.join(', '),
-        size: 120,
+        size: 128,
         header: ({ column }) => <SortHeader label="Labels" column={column} />,
         cell: ({ row }) => <LabelChips labels={row.original.labels} />,
         meta: { label: 'Labels', toggleable: true },
@@ -194,7 +193,7 @@ export function useBacklogColumns({
       {
         id: 'assignee',
         accessorFn: (task) => task.assignee.join(', '),
-        size: 80,
+        size: 84,
         header: ({ column }) => <SortHeader label="Assignee" column={column} />,
         cell: ({ row }) => <AvatarStack names={row.original.assignee} />,
         meta: { label: 'Assignee', toggleable: true },
@@ -202,7 +201,7 @@ export function useBacklogColumns({
       {
         id: 'milestone',
         accessorFn: (task) => milestoneLabel(task, milestones),
-        size: 100,
+        size: 118,
         header: ({ column }) => <SortHeader label="Milestone" column={column} />,
         cell: ({ row }) => {
           const label = milestoneLabel(row.original, milestones);
@@ -219,13 +218,10 @@ export function useBacklogColumns({
       {
         id: 'created',
         accessorKey: 'createdDate',
-        size: 80,
+        size: 82,
         header: ({ column }) => <SortHeader label="Created" column={column} />,
         cell: ({ row }) => (
-          <span
-            className="dshbm-text-2xs dshbm-text-muted-foreground"
-            title={row.original.createdDate}
-          >
+          <span className="dshbm-text-[11.5px] dshbm-tabular-nums" title={row.original.createdDate}>
             {relativeDate(row.original.createdDate)}
           </span>
         ),
@@ -243,7 +239,7 @@ export function useBacklogColumns({
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="dshbm-inline-flex dshbm-h-6 dshbm-w-6 dshbm-items-center dshbm-justify-center dshbm-rounded dshbm-text-muted-foreground hover:dshbm-bg-accent hover:dshbm-text-foreground"
+                  className="dshbm-rowAction dshbm-inline-flex dshbm-h-7 dshbm-w-7 dshbm-items-center dshbm-justify-center dshbm-rounded-md dshbm-text-muted-foreground hover:dshbm-bg-accent hover:dshbm-text-foreground"
                   aria-label={`Actions for ${row.original.id}`}
                 >
                   <MoreHorizontal size={13} />
@@ -306,7 +302,7 @@ export function TaskRowActions({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="dshbm-inline-flex dshbm-h-6 dshbm-w-6 dshbm-items-center dshbm-justify-center dshbm-rounded dshbm-text-muted-foreground hover:dshbm-bg-accent hover:dshbm-text-foreground"
+          className="dshbm-rowAction dshbm-inline-flex dshbm-h-7 dshbm-w-7 dshbm-items-center dshbm-justify-center dshbm-rounded-md dshbm-text-muted-foreground hover:dshbm-bg-accent hover:dshbm-text-foreground"
           aria-label={`Actions for ${task.id}`}
         >
           <MoreHorizontal size={13} />

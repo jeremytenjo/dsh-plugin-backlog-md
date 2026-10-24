@@ -16,7 +16,7 @@ const TooltipContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        'dshbm-z-[2147483004] dshbm-max-w-[240px] dshbm-rounded-md dshbm-bg-tooltip dshbm-px-2 dshbm-py-1 dshbm-text-2xs dshbm-leading-relaxed dshbm-text-tooltip-foreground dshbm-shadow-md',
+        'dshbm-ui dshbm-z-[2147483004] dshbm-max-w-[240px] dshbm-rounded-md dshbm-bg-tooltip dshbm-px-2 dshbm-py-1.5 dshbm-text-[11.5px] dshbm-leading-relaxed dshbm-text-tooltip-foreground dshbm-shadow-md',
         className,
       )}
       {...props}

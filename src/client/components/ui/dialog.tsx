@@ -26,7 +26,7 @@ const DialogContent = React.forwardRef<
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
-      className={cn('dshbm-dialogContent dshbm-p-4', className)}
+      className={cn('dshbm-ui dshbm-dialogContent dshbm-p-5', className)}
       {...props}
     >
       {children}
@@ -43,7 +43,7 @@ DialogContent.displayName = 'DialogContent';
 
 function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('dshbm-mb-3 dshbm-flex dshbm-flex-col dshbm-gap-1', className)} {...props} />
+    <div className={cn('dshbm-mb-4 dshbm-flex dshbm-flex-col dshbm-gap-1', className)} {...props} />
   );
 }
 
@@ -51,7 +51,7 @@ function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
   return (
     <div
       className={cn(
-        'dshbm-mt-4 dshbm-flex dshbm-items-center dshbm-justify-end dshbm-gap-2',
+        'dshbm-mt-5 dshbm-flex dshbm-items-center dshbm-justify-end dshbm-gap-2',
         className,
       )}
       {...props}
@@ -65,7 +65,10 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn('dshbm-pr-6 dshbm-text-sm dshbm-font-semibold dshbm-text-foreground', className)}
+    className={cn(
+      'dshbm-pr-6 dshbm-text-[15px] dshbm-font-semibold dshbm-leading-6 dshbm-text-foreground',
+      className,
+    )}
     {...props}
   />
 ));
@@ -77,7 +80,10 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn('dshbm-text-xs dshbm-leading-relaxed dshbm-text-muted-foreground', className)}
+    className={cn(
+      'dshbm-text-[12.5px] dshbm-leading-relaxed dshbm-text-muted-foreground',
+      className,
+    )}
     {...props}
   />
 ));

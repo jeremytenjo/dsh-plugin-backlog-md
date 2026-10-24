@@ -1,12 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ListTodo, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import * as React from 'react';
 import { useBacklogStatus, useRestartBacklogServer } from '../hooks/useBacklog';
 import { sendToChatPrompt } from '../lib/utils';
 import type { BacklogStatus, BacklogTask } from '../types';
 import { BacklogSetup } from './BacklogSetup';
 import { BacklogWorkspace } from './BacklogWorkspace';
-import { InlineSpinner } from './badges';
+import { BacklogMark, InlineSpinner } from './badges';
 import { Button } from './ui/button';
 import { TooltipProvider } from './ui/tooltip';
 
@@ -78,6 +78,11 @@ function BacklogPanelBody({ sessionId, inputActions, tabVisible = true }: Backlo
     (task: BacklogTask) => sendToComposer(sessionId, sendToChatPrompt(task), inputActions),
     [inputActions, sessionId],
   );
+  const sendTasksToChat = React.useCallback(
+    (tasks: BacklogTask[]) =>
+      sendToComposer(sessionId, tasks.map(sendToChatPrompt).join('\n\n'), inputActions),
+    [inputActions, sessionId],
+  );
 
   const retry = React.useCallback(() => {
     void statusQuery.refetch();
@@ -98,12 +103,10 @@ function BacklogPanelBody({ sessionId, inputActions, tabVisible = true }: Backlo
   if (!sessionId) {
     return (
       <PanelShell>
-        <div className="dshbm-flex dshbm-flex-1 dshbm-flex-col dshbm-items-center dshbm-justify-center dshbm-gap-2 dshbm-p-6 dshbm-text-center">
-          <ListTodo size={22} className="dshbm-text-muted-foreground" />
-          <p className="dshbm-m-0 dshbm-text-xs dshbm-text-muted-foreground">
-            Open a Harness session to use Backlog.md.
-          </p>
-        </div>
+        <PanelMessage
+          title="Open a session"
+          description="Backlog.md works inside a Harness session. Open or create one, then return to this panel."
+        />
       </PanelShell>
     );
   }
@@ -119,21 +122,25 @@ function BacklogPanelBody({ sessionId, inputActions, tabVisible = true }: Backlo
   if (statusQuery.error) {
     return (
       <PanelShell>
-        <div className="dshbm-flex dshbm-flex-1 dshbm-flex-col dshbm-items-center dshbm-justify-center dshbm-gap-2 dshbm-p-6 dshbm-text-center">
-          <p className="dshbm-m-0 dshbm-text-xs dshbm-text-muted-foreground">
-            {statusQuery.error instanceof Error
+        <PanelMessage
+          title="Could not reach Backlog.md"
+          description={
+            statusQuery.error instanceof Error
               ? statusQuery.error.message
-              : 'Could not connect to Backlog.md.'}
-          </p>
-          <Button type="button" variant="outline" size="sm" onClick={retry}>
-            <RefreshCw size={12} />
-            Retry
-          </Button>
-          <Button type="button" variant="ghost" size="sm" onClick={() => void restartServer()}>
-            <RefreshCw size={12} />
-            Restart server
-          </Button>
-        </div>
+              : 'The Backlog.md server did not answer.'
+          }
+          action={
+            <>
+              <Button type="button" variant="outline" size="sm" onClick={retry}>
+                <RefreshCw size={12} />
+                Retry
+              </Button>
+              <Button type="button" variant="ghost" size="sm" onClick={() => void restartServer()}>
+                Restart server
+              </Button>
+            </>
+          }
+        />
       </PanelShell>
     );
   }
@@ -167,35 +174,66 @@ function BacklogPanelBody({ sessionId, inputActions, tabVisible = true }: Backlo
         status={status}
         sessionId={sessionId}
         sendToChat={sendToChat}
+        sendTasksToChat={sendTasksToChat}
         tabVisible={tabVisible}
       />
     </PanelShell>
   );
 }
 
+function PanelMessage({
+  title,
+  description,
+  action,
+}: {
+  title: string;
+  description: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="dshbm-flex dshbm-min-h-0 dshbm-flex-1 dshbm-flex-col">
+      <header className="dshbm-header">
+        <div className="dshbm-headerIdentity">
+          <BacklogMark size={16} />
+          <div className="dshbm-headerText">
+            <h1 className="dshbm-title">Backlog</h1>
+            <div className="dshbm-subtitle">Task management</div>
+          </div>
+        </div>
+      </header>
+      <div className="dshbm-emptyWrap">
+        <div className="dshbm-empty">
+          <div className="dshbm-emptyText">
+            <p className="dshbm-emptyTitle">{title}</p>
+            <p className="dshbm-emptyBody">{description}</p>
+          </div>
+          {action ? <div className="dshbm-emptyAction">{action}</div> : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PanelLoading() {
   return (
     <div className="dshbm-flex dshbm-min-h-0 dshbm-flex-1 dshbm-flex-col">
-      <div className="dshbm-flex dshbm-items-center dshbm-gap-2 dshbm-border-b dshbm-border-border dshbm-px-3 dshbm-py-2">
-        <ListTodo size={15} className="dshbm-text-brand-primary" />
-        <span className="dshbm-text-xs dshbm-font-semibold">Backlog</span>
-        <InlineSpinner />
-        <span className="dshbm-text-2xs dshbm-text-muted-foreground">
-          Starting the Backlog.md server…
-        </span>
-      </div>
-      <div className="dshbm-flex dshbm-flex-col dshbm-gap-1 dshbm-p-3">
+      <header className="dshbm-header">
+        <div className="dshbm-headerIdentity">
+          <BacklogMark size={16} />
+          <div className="dshbm-headerText">
+            <h1 className="dshbm-title">Backlog</h1>
+            <div className="dshbm-subtitle">
+              <InlineSpinner />
+              <span>Starting the Backlog.md server</span>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div className="dshbm-flex dshbm-flex-col dshbm-px-3 dshbm-pt-2">
         {Array.from({ length: 10 }).map((_, index) => (
-          <span
-            key={index}
-            className="dshbm-skeleton"
-            style={{ height: 30, opacity: 1 - index * 0.06 }}
-          />
+          <span key={index} className="dshbm-skeleton" style={{ height: 38, marginBottom: 1 }} />
         ))}
       </div>
-      <p className="dshbm-mt-auto dshbm-m-0 dshbm-px-3 dshbm-py-2 dshbm-text-2xs dshbm-text-muted-foreground">
-        The Harness UI is not blocked while the local server starts.
-      </p>
     </div>
   );
 }

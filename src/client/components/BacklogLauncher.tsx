@@ -1,8 +1,8 @@
-import { ListTodo } from 'lucide-react';
 import * as React from 'react';
 
 import { sameSession } from '../lib/utils';
 import { SEND_TO_CHAT_EVENT, type SendToChatDetail } from './BacklogPanel';
+import { BacklogMark } from './badges';
 
 export const TAB_KIND = 'backlog-md';
 
@@ -76,7 +76,7 @@ export function BacklogLauncher({
       title="Backlog"
       data-active={active ? 'true' : 'false'}
     >
-      <ListTodo size={15} strokeWidth={1.5} aria-hidden="true" focusable="false" />
+      <BacklogMark size={15} />
     </button>
   );
 }

@@ -17,7 +17,7 @@ const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        'dshbm-popoverContent dshbm-z-[2147483003] dshbm-min-w-[10rem] dshbm-overflow-hidden dshbm-rounded-md dshbm-p-1',
+        'dshbm-ui dshbm-popoverContent dshbm-z-[2147483003] dshbm-min-w-[10rem] dshbm-overflow-hidden dshbm-rounded-md dshbm-p-1',
         className,
       )}
       {...props}
@@ -35,7 +35,7 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      'dshbm-relative dshbm-flex dshbm-cursor-default dshbm-select-none dshbm-items-center dshbm-gap-2 dshbm-rounded-sm dshbm-px-2 dshbm-py-1.5 dshbm-text-xs dshbm-outline-none focus:dshbm-bg-accent data-[disabled]:dshbm-pointer-events-none data-[disabled]:dshbm-opacity-50',
+      'dshbm-relative dshbm-flex dshbm-cursor-default dshbm-select-none dshbm-items-center dshbm-gap-2 dshbm-rounded-sm dshbm-px-2 dshbm-py-1.5 dshbm-text-[12px] dshbm-outline-none focus:dshbm-bg-accent data-[disabled]:dshbm-pointer-events-none data-[disabled]:dshbm-opacity-50',
       destructive && 'dshbm-text-destructive focus:dshbm-bg-destructive/10',
       className,
     )}
@@ -52,7 +52,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     ref={ref}
     checked={checked}
     className={cn(
-      'dshbm-relative dshbm-flex dshbm-cursor-default dshbm-select-none dshbm-items-center dshbm-gap-2 dshbm-rounded-sm dshbm-py-1.5 dshbm-pl-7 dshbm-pr-2 dshbm-text-xs dshbm-outline-none focus:dshbm-bg-accent',
+      'dshbm-relative dshbm-flex dshbm-cursor-default dshbm-select-none dshbm-items-center dshbm-gap-2 dshbm-rounded-sm dshbm-py-1.5 dshbm-pl-7 dshbm-pr-2 dshbm-text-[12px] dshbm-outline-none focus:dshbm-bg-accent',
       className,
     )}
     {...props}
@@ -74,7 +74,7 @@ const DropdownMenuLabel = React.forwardRef<
   <DropdownMenuPrimitive.Label
     ref={ref}
     className={cn(
-      'dshbm-px-2 dshbm-py-1 dshbm-text-2xs dshbm-font-medium dshbm-uppercase dshbm-tracking-wide dshbm-text-muted-foreground',
+      'dshbm-px-2 dshbm-py-1 dshbm-text-[11.5px] dshbm-font-medium dshbm-text-muted-foreground',
       className,
     )}
     {...props}

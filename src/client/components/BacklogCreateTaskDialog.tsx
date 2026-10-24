@@ -109,8 +109,8 @@ export function BacklogCreateTaskDialog({
               : 'Create a task in the Backlog.md project. Backlog.md assigns the ID.'}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={submit} className="dshbm-flex dshbm-flex-col dshbm-gap-2.5">
-          <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+        <form onSubmit={submit} className="dshbm-flex dshbm-flex-col dshbm-gap-3">
+          <div className="dshbm-field">
             <Label htmlFor="backlog-new-title">Title</Label>
             <Input
               id="backlog-new-title"
@@ -121,18 +121,18 @@ export function BacklogCreateTaskDialog({
               maxLength={500}
             />
           </div>
-          <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
-            <Label htmlFor="backlog-new-description">Description (Markdown)</Label>
+          <div className="dshbm-field">
+            <Label htmlFor="backlog-new-description">Description</Label>
             <Textarea
               id="backlog-new-description"
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               placeholder="Context, notes, and links…"
-              className="dshbm-min-h-20"
+              className="dshbm-min-h-20 dshbm-text-[12.5px]"
             />
           </div>
-          <div className="dshbm-grid dshbm-grid-cols-2 dshbm-gap-2">
-            <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+          <div className="dshbm-formGrid">
+            <div className="dshbm-field">
               <Label>Status</Label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger aria-label="Status">
@@ -147,7 +147,7 @@ export function BacklogCreateTaskDialog({
                 </SelectContent>
               </Select>
             </div>
-            <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+            <div className="dshbm-field">
               <Label>Priority</Label>
               <Select
                 value={priority || '__none__'}
@@ -166,7 +166,7 @@ export function BacklogCreateTaskDialog({
                 </SelectContent>
               </Select>
             </div>
-            <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+            <div className="dshbm-field">
               <Label>Assignee</Label>
               <Input
                 value={assignee}
@@ -174,7 +174,7 @@ export function BacklogCreateTaskDialog({
                 placeholder="alice, bob"
               />
             </div>
-            <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+            <div className="dshbm-field">
               <Label>Labels</Label>
               <Input
                 value={labels}
@@ -182,7 +182,7 @@ export function BacklogCreateTaskDialog({
                 placeholder="ui, docs"
               />
             </div>
-            <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+            <div className="dshbm-field">
               <Label>Milestone</Label>
               <Select
                 value={milestone || '__none__'}
@@ -201,7 +201,7 @@ export function BacklogCreateTaskDialog({
                 </SelectContent>
               </Select>
             </div>
-            <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+            <div className="dshbm-field">
               <Label>Due date</Label>
               <Input
                 value={dueDate}
@@ -210,17 +210,17 @@ export function BacklogCreateTaskDialog({
               />
             </div>
           </div>
-          <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+          <div className="dshbm-field">
             <Label>Acceptance criteria (one per line)</Label>
             <Textarea
               value={criteria}
               onChange={(event) => setCriteria(event.target.value)}
               placeholder={'Works end to end\nTests cover the change'}
-              className="dshbm-min-h-16"
+              className="dshbm-min-h-16 dshbm-text-[12.5px]"
             />
           </div>
           {error ? (
-            <p className="dshbm-m-0 dshbm-rounded-md dshbm-bg-destructive/10 dshbm-px-2 dshbm-py-1.5 dshbm-text-2xs dshbm-text-destructive">
+            <p className="dshbm-m-0 dshbm-errorBox dshbm-rounded-md dshbm-px-2.5 dshbm-py-2 dshbm-text-[12px] dshbm-text-destructive">
               {error}
             </p>
           ) : null}

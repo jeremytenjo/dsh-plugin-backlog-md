@@ -42,7 +42,6 @@ import type {
 import { BridgeRequestError } from '../types';
 import { BacklogConfirmDialog } from './BacklogConfirmDialog';
 import { InlineSpinner, PriorityBadge, ProgressRing, StatusBadge } from './badges';
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
 import {
@@ -234,11 +233,9 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="dshbm-border-b dshbm-border-border dshbm-px-3 dshbm-py-3">
-      <div className="dshbm-mb-2 dshbm-flex dshbm-items-center dshbm-gap-2">
-        <h3 className="dshbm-m-0 dshbm-text-2xs dshbm-font-semibold dshbm-uppercase dshbm-tracking-wide dshbm-text-muted-foreground">
-          {title}
-        </h3>
+    <section className="dshbm-section">
+      <div className="dshbm-sectionHead">
+        <h3 className="dshbm-sectionTitle">{title}</h3>
         <div className="dshbm-ml-auto dshbm-flex dshbm-items-center dshbm-gap-1">{action}</div>
       </div>
       {children}
@@ -265,14 +262,14 @@ function CheckList({
   return (
     <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
       {items.length === 0 ? (
-        <p className="dshbm-m-0 dshbm-text-2xs dshbm-text-muted-foreground">
+        <p className="dshbm-m-0 dshbm-text-[12px] dshbm-text-muted-foreground">
           {emptyLabel || 'None yet.'}
         </p>
       ) : null}
       {items.map((item, index) => (
         <div
           key={`${item.index ?? 'new'}-${index}`}
-          className="dshbm-group dshbm-flex dshbm-items-center dshbm-gap-2"
+          className="dshbm-group dshbm-flex dshbm-items-center dshbm-gap-2 dshbm-rounded-md dshbm-px-1 hover:dshbm-bg-[var(--dsw-alias-interactive-bg-hover)]"
         >
           <Checkbox
             checked={item.checked}
@@ -294,7 +291,7 @@ function CheckList({
                 ),
               )
             }
-            className="dshbm-h-6 dshbm-flex-1 dshbm-border-transparent dshbm-bg-transparent dshbm-px-1"
+            className="dshbm-h-7 dshbm-flex-1 dshbm-border-transparent dshbm-bg-transparent dshbm-px-1 dshbm-text-[12.5px]"
           />
           <Button
             type="button"
@@ -318,8 +315,8 @@ function CheckList({
               add();
             }
           }}
-          placeholder="Add an item…"
-          className="dshbm-h-6 dshbm-flex-1"
+          placeholder="Add an item"
+          className="dshbm-h-7 dshbm-flex-1 dshbm-text-[12.5px]"
         />
         <Button type="button" variant="outline" size="xs" onClick={add} disabled={!draft.trim()}>
           <Plus size={11} />
@@ -533,7 +530,7 @@ export function BacklogTaskDetails({
   if (taskQuery.isError || !task) {
     return (
       <div className="dshbm-flex dshbm-flex-1 dshbm-flex-col dshbm-items-center dshbm-justify-center dshbm-gap-2 dshbm-p-4">
-        <p className="dshbm-m-0 dshbm-text-xs dshbm-text-muted-foreground">
+        <p className="dshbm-m-0 dshbm-text-[12.5px] dshbm-text-muted-foreground">
           {taskQuery.error instanceof Error
             ? taskQuery.error.message
             : 'This task is no longer available.'}
@@ -583,7 +580,7 @@ export function BacklogTaskDetails({
 
   return (
     <div className="dshbm-flex dshbm-min-h-0 dshbm-flex-1 dshbm-flex-col">
-      <div className="dshbm-flex dshbm-flex-none dshbm-items-center dshbm-gap-2 dshbm-border-b dshbm-border-border dshbm-px-2 dshbm-py-1.5">
+      <div className="dshbm-flex dshbm-flex-none dshbm-items-center dshbm-gap-1.5 dshbm-border-b dshbm-border-[var(--dsw-alias-border-l1)] dshbm-px-2 dshbm-py-2">
         <Button
           type="button"
           variant="ghost"
@@ -594,25 +591,25 @@ export function BacklogTaskDetails({
         >
           <ArrowLeft size={14} />
         </Button>
-        <Badge className="dshbm-font-mono dshbm-text-2xs dshbm-tone-neutral">{task.id}</Badge>
+        <span className="dshbm-taskId">{task.id}</span>
         {parent ? (
           <button
             type="button"
-            className="dshbm-inline-flex dshbm-max-w-[150px] dshbm-items-center dshbm-gap-1 dshbm-truncate dshbm-text-2xs dshbm-text-muted-foreground hover:dshbm-text-foreground"
+            className="dshbm-inline-flex dshbm-max-w-[150px] dshbm-items-center dshbm-gap-1 dshbm-truncate dshbm-text-[11.5px] dshbm-text-muted-foreground hover:dshbm-text-foreground"
             onClick={() => onOpenTask(parent.id)}
             title={`Parent: ${parent.title}`}
           >
-            <ChevronRight size={10} className="dshbm-rotate-180" />
+            <ChevronRight size={11} className="dshbm-rotate-180" />
             {parent.title}
           </button>
         ) : null}
         <div className="dshbm-ml-auto dshbm-flex dshbm-items-center dshbm-gap-1">
           {dirty ? (
-            <span className="dshbm-text-2xs dshbm-text-[var(--dsw-alias-state-warn-label)]">
+            <span className="dshbm-text-[11.5px] dshbm-text-[var(--dsw-alias-state-warn-label)]">
               Unsaved changes
             </span>
           ) : savedAt ? (
-            <span className="dshbm-text-2xs dshbm-text-muted-foreground">Saved</span>
+            <span className="dshbm-text-[11.5px] dshbm-text-muted-foreground">Saved</span>
           ) : null}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -654,8 +651,8 @@ export function BacklogTaskDetails({
 
       <div className="dshbm-scroll dshbm-flex-1">
         {external ? (
-          <div className="dshbm-mx-3 dshbm-mt-3 dshbm-flex dshbm-flex-wrap dshbm-items-center dshbm-gap-2 dshbm-rounded-md dshbm-border dshbm-border-border dshbm-bg-secondary dshbm-px-2 dshbm-py-1.5">
-            <span className="dshbm-text-2xs dshbm-text-muted-foreground">
+          <div className="dshbm-mx-3 dshbm-mt-3 dshbm-flex dshbm-flex-wrap dshbm-items-center dshbm-gap-2 dshbm-rounded-md dshbm-border dshbm-border-[var(--dsw-alias-border-l1)] dshbm-bg-[var(--dsw-alias-bg-module-platform)] dshbm-px-2.5 dshbm-py-2">
+            <span className="dshbm-text-[12px] dshbm-text-muted-foreground">
               Backlog.md changed this task outside the panel.
             </span>
             <Button
@@ -678,20 +675,21 @@ export function BacklogTaskDetails({
         ) : null}
 
         {error ? (
-          <div className="dshbm-mx-3 dshbm-mt-3 dshbm-flex dshbm-items-start dshbm-gap-2 dshbm-rounded-md dshbm-bg-destructive/10 dshbm-px-2 dshbm-py-1.5">
-            <span className="dshbm-text-2xs dshbm-text-destructive">{error}</span>
+          <div className="dshbm-errorBox dshbm-mx-3 dshbm-mt-3 dshbm-flex dshbm-items-start dshbm-gap-2 dshbm-rounded-md dshbm-px-2.5 dshbm-py-2">
+            <span className="dshbm-text-[12px] dshbm-text-destructive">{error}</span>
           </div>
         ) : null}
 
         <div className="dshbm-px-3 dshbm-pt-3">
+          <h1 className="dshbm-sr-only">{task.title}</h1>
           <Input
             value={form.title}
             onChange={(event) => setForm({ ...form, title: event.target.value })}
-            className="dshbm-h-auto dshbm-border-transparent dshbm-bg-transparent dshbm-px-0 dshbm-py-1 dshbm-text-base dshbm-font-semibold focus-visible:dshbm-ring-0"
+            className="dshbm-titleInput"
             aria-label="Task title"
             maxLength={500}
           />
-          <div className="dshbm-mt-1 dshbm-flex dshbm-flex-wrap dshbm-items-center dshbm-gap-2 dshbm-text-2xs dshbm-text-muted-foreground">
+          <div className="dshbm-metaRow dshbm-mt-1.5">
             <StatusBadge status={task.status} statuses={status.statuses} />
             <PriorityBadge priority={task.priority} />
             {task.assignee.length > 0 ? (
@@ -717,8 +715,8 @@ export function BacklogTaskDetails({
         </div>
 
         <Section title="Metadata">
-          <div className="dshbm-grid dshbm-grid-cols-2 dshbm-gap-2">
-            <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+          <div className="dshbm-formGrid">
+            <div className="dshbm-field">
               <Label>Status</Label>
               <Select
                 value={form.status}
@@ -736,7 +734,7 @@ export function BacklogTaskDetails({
                 </SelectContent>
               </Select>
             </div>
-            <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+            <div className="dshbm-field">
               <Label>Priority</Label>
               <Select
                 value={form.priority || '__none__'}
@@ -757,7 +755,7 @@ export function BacklogTaskDetails({
                 </SelectContent>
               </Select>
             </div>
-            <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+            <div className="dshbm-field">
               <Label>Assignee</Label>
               <Input
                 value={form.assignee}
@@ -765,7 +763,7 @@ export function BacklogTaskDetails({
                 placeholder="alice, bob"
               />
             </div>
-            <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+            <div className="dshbm-field">
               <Label>Labels</Label>
               <Input
                 value={form.labels}
@@ -773,7 +771,7 @@ export function BacklogTaskDetails({
                 placeholder="ui, docs"
               />
             </div>
-            <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+            <div className="dshbm-field">
               <Label>Milestone</Label>
               <Select
                 value={form.milestone || '__none__'}
@@ -794,7 +792,7 @@ export function BacklogTaskDetails({
                 </SelectContent>
               </Select>
             </div>
-            <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
+            <div className="dshbm-field">
               <Label>Due date</Label>
               <Input
                 value={form.dueDate}
@@ -809,11 +807,11 @@ export function BacklogTaskDetails({
           <Textarea
             value={form.description}
             onChange={(event) => setForm({ ...form, description: event.target.value })}
-            className="dshbm-min-h-32 dshbm-font-mono"
+            className="dshbm-min-h-32 dshbm-text-[12.5px]"
             aria-label="Description in Markdown"
-            placeholder="Markdown description…"
+            placeholder="Markdown description"
           />
-          <p className="dshbm-mt-1 dshbm-m-0 dshbm-text-2xs dshbm-text-muted-foreground">
+          <p className="dshbm-mt-1 dshbm-m-0 dshbm-text-[11.5px] dshbm-text-muted-foreground">
             Markdown is preserved exactly as Backlog.md stores it.
           </p>
         </Section>
@@ -844,7 +842,7 @@ export function BacklogTaskDetails({
           }
         >
           {children.length === 0 ? (
-            <p className="dshbm-m-0 dshbm-text-2xs dshbm-text-muted-foreground">No subtasks.</p>
+            <p className="dshbm-m-0 dshbm-text-[12px] dshbm-text-muted-foreground">No subtasks.</p>
           ) : (
             <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
               <div className="dshbm-mb-1">
@@ -854,13 +852,11 @@ export function BacklogTaskDetails({
                 <button
                   key={child.id}
                   type="button"
-                  className="dshbm-flex dshbm-items-center dshbm-gap-2 dshbm-rounded-md dshbm-border dshbm-border-border dshbm-bg-transparent dshbm-px-2 dshbm-py-1.5 dshbm-text-left hover:dshbm-bg-secondary"
+                  className="dshbm-flex dshbm-items-center dshbm-gap-2 dshbm-rounded-md dshbm-border dshbm-border-[var(--dsw-alias-border-l1)] dshbm-bg-transparent dshbm-px-2 dshbm-py-2 dshbm-text-left hover:dshbm-bg-[var(--dsw-alias-interactive-bg-hover)]"
                   onClick={() => onOpenTask(child.id)}
                 >
-                  <span className="dshbm-font-mono dshbm-text-2xs dshbm-text-muted-foreground">
-                    {child.id}
-                  </span>
-                  <span className="dshbm-min-w-0 dshbm-flex-1 dshbm-truncate dshbm-text-xs">
+                  <span className="dshbm-taskId">{child.id}</span>
+                  <span className="dshbm-min-w-0 dshbm-flex-1 dshbm-truncate dshbm-text-[12.5px]">
                     {child.title}
                   </span>
                   <StatusBadge status={child.status} statuses={status.statuses} />
@@ -872,7 +868,9 @@ export function BacklogTaskDetails({
 
         <Section title="Dependencies">
           {form.dependencies.length === 0 ? (
-            <p className="dshbm-m-0 dshbm-text-2xs dshbm-text-muted-foreground">No dependencies.</p>
+            <p className="dshbm-m-0 dshbm-text-[12px] dshbm-text-muted-foreground">
+              No dependencies.
+            </p>
           ) : (
             <div className="dshbm-flex dshbm-flex-col dshbm-gap-1">
               {form.dependencies.map((dependencyId) => {
@@ -880,17 +878,14 @@ export function BacklogTaskDetails({
                 return (
                   <div
                     key={dependencyId}
-                    className="dshbm-flex dshbm-items-center dshbm-gap-2 dshbm-rounded-md dshbm-border dshbm-border-border dshbm-px-2 dshbm-py-1"
+                    className="dshbm-flex dshbm-items-center dshbm-gap-2 dshbm-rounded-md dshbm-border dshbm-border-[var(--dsw-alias-border-l1)] dshbm-px-2 dshbm-py-1.5"
                   >
                     <button
                       type="button"
-                      className="dshbm-min-w-0 dshbm-flex-1 dshbm-truncate dshbm-text-left dshbm-text-xs hover:dshbm-underline"
+                      className="dshbm-min-w-0 dshbm-flex-1 dshbm-truncate dshbm-text-left dshbm-text-[12.5px] hover:dshbm-underline"
                       onClick={() => onOpenTask(dependencyId)}
                     >
-                      <span className="dshbm-font-mono dshbm-text-2xs dshbm-text-muted-foreground">
-                        {dependencyId}
-                      </span>{' '}
-                      {dependency?.title ?? ''}
+                      <span className="dshbm-taskId">{dependencyId}</span> {dependency?.title ?? ''}
                     </button>
                     {dependency ? (
                       <StatusBadge status={dependency.status} statuses={status.statuses} />
@@ -943,13 +938,13 @@ export function BacklogTaskDetails({
               {task.comments.map((comment, index) => (
                 <div
                   key={comment.id ?? index}
-                  className="dshbm-rounded-md dshbm-border dshbm-border-border dshbm-px-2 dshbm-py-1.5"
+                  className="dshbm-rounded-md dshbm-border dshbm-border-[var(--dsw-alias-border-l1)] dshbm-px-2.5 dshbm-py-2"
                 >
-                  <div className="dshbm-mb-1 dshbm-flex dshbm-items-center dshbm-gap-2 dshbm-text-2xs dshbm-text-muted-foreground">
+                  <div className="dshbm-mb-1 dshbm-flex dshbm-items-center dshbm-gap-2 dshbm-text-[11.5px] dshbm-text-muted-foreground">
                     {comment.author ? <span>{comment.author}</span> : null}
                     {comment.createdDate ? <span>{relativeDate(comment.createdDate)}</span> : null}
                   </div>
-                  <p className="dshbm-m-0 dshbm-whitespace-pre-wrap dshbm-text-xs">
+                  <p className="dshbm-m-0 dshbm-whitespace-pre-wrap dshbm-text-[12.5px]">
                     {comment.body}
                   </p>
                 </div>
@@ -959,10 +954,10 @@ export function BacklogTaskDetails({
         ) : null}
 
         <div className="dshbm-px-3 dshbm-py-3">
-          <div className="dshbm-flex dshbm-flex-wrap dshbm-items-center dshbm-gap-2 dshbm-rounded-md dshbm-bg-secondary dshbm-px-2 dshbm-py-1.5 dshbm-text-2xs dshbm-text-muted-foreground">
+          <div className="dshbm-flex dshbm-flex-wrap dshbm-items-center dshbm-gap-2 dshbm-text-[11.5px] dshbm-text-muted-foreground">
             <span className="dshbm-inline-flex dshbm-items-center dshbm-gap-1">
               <ExternalLink size={11} />
-              Backlog.md project: {status.workspace.name}
+              {status.workspace.name}
             </span>
             <span>Created {absoluteDate(task.createdDate) || '—'}</span>
             {task.updatedDate ? <span>Updated {absoluteDate(task.updatedDate)}</span> : null}
@@ -979,15 +974,15 @@ export function BacklogTaskDetails({
         </div>
       </div>
 
-      <div className="dshbm-flex dshbm-flex-none dshbm-items-center dshbm-gap-2 dshbm-border-t dshbm-border-border dshbm-bg-background dshbm-px-3 dshbm-py-2">
+      <div className="dshbm-panelFooter dshbm-min-h-[42px]">
         {dirty ? (
-          <span className="dshbm-inline-flex dshbm-items-center dshbm-gap-1 dshbm-text-2xs dshbm-text-muted-foreground">
+          <span className="dshbm-inline-flex dshbm-items-center dshbm-gap-1 dshbm-text-[11.5px] dshbm-text-muted-foreground">
             <span className="dshbm-h-1.5 dshbm-w-1.5 dshbm-rounded-full dshbm-bg-[var(--dsw-alias-state-warn-primary)]" />
             Unsaved changes
           </span>
         ) : (
-          <span className="dshbm-text-2xs dshbm-text-muted-foreground">
-            {savedAt ? 'Saved to Backlog.md' : 'Edits save through the official API.'}
+          <span className="dshbm-text-[11.5px] dshbm-text-muted-foreground">
+            {savedAt ? 'Saved to Backlog.md' : 'No unsaved changes'}
           </span>
         )}
         <div className="dshbm-ml-auto dshbm-flex dshbm-items-center dshbm-gap-1.5">
@@ -1063,7 +1058,7 @@ export function BacklogTaskDetails({
                 : ''}
             </DialogDescription>
           </DialogHeader>
-          <div className="dshbm-rounded-md dshbm-bg-secondary dshbm-px-2 dshbm-py-1.5 dshbm-text-2xs dshbm-text-muted-foreground">
+          <div className="dshbm-rounded-md dshbm-bg-[var(--dsw-alias-bg-module-platform)] dshbm-px-2.5 dshbm-py-2 dshbm-text-[12px] dshbm-leading-relaxed dshbm-text-muted-foreground">
             Nothing is saved until you choose. Reloading keeps the external version; merging keeps
             your edits and preserves external changes in fields you did not touch.
           </div>
@@ -1109,7 +1104,7 @@ export function BacklogTaskDetails({
 function DetailSkeleton({ onBack }: { onBack: () => void }) {
   return (
     <div className="dshbm-flex dshbm-flex-1 dshbm-flex-col">
-      <div className="dshbm-flex dshbm-items-center dshbm-gap-2 dshbm-border-b dshbm-border-border dshbm-px-2 dshbm-py-1.5">
+      <div className="dshbm-flex dshbm-items-center dshbm-gap-2 dshbm-border-b dshbm-border-[var(--dsw-alias-border-l1)] dshbm-px-2 dshbm-py-2">
         <Button type="button" variant="ghost" size="iconSm" onClick={onBack} aria-label="Back">
           <ArrowLeft size={14} />
         </Button>
