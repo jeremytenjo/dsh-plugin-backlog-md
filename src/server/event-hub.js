@@ -141,7 +141,6 @@ export class BacklogEventHub {
       this.reconnectTimer = null;
       this.connect();
     }, delay);
-    if (typeof this.reconnectTimer.unref === 'function') this.reconnectTimer.unref();
   }
 
   push(type, data = {}) {
