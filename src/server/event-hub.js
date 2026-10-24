@@ -197,7 +197,6 @@ export class BacklogEventHub {
         },
         Math.max(0, Number(timeoutMs) || 0),
       );
-      if (typeof waiter.timer.unref === 'function') waiter.timer.unref();
       this.waiters.add(waiter);
     });
   }
